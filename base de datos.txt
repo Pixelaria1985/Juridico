@@ -1,0 +1,86 @@
+Estructura básica del proyecto
+
+/sistema-legal/
+│
+├── /css/                → Archivos CSS personalizados
+├── /js/                 → Scripts JS y AJAX
+├── /img/                → Carpeta para subir imágenes de fojas
+│
+├── /abogados/           → CRUD de abogados
+│   ├── crear.php
+│   ├── listar.php
+│   ├── editar.php
+│   └── eliminar.php
+│
+├── /clientes/           → CRUD de clientes
+│   ├── crear.php
+│   ├── listar.php
+│   ├── editar.php
+│   └── eliminar.php
+│
+├── /especialidades/     → CRUD de especialidades
+│
+├── /casos/              → Crear, buscar, listar casos
+│
+├── /fojas/              → Crear fojas y visualizar
+│
+├── /estadisticas/       → Página con gráficos (Chart.js)
+│
+├── db.php               → Conexión a la base de datos
+└── index.php            → Página inicial o menú
+
+
+-------------------------------------------------------------------------------
+
+-- Crear base de datos
+CREATE DATABASE IF NOT EXISTS sistema_legal;
+USE sistema_legal;
+
+-- Tabla: Abogado
+CREATE TABLE abogado (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    direccion VARCHAR(255),
+    telefono VARCHAR(50),
+    celular VARCHAR(50)
+);
+
+-- Tabla: Cliente
+CREATE TABLE cliente (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    direccion VARCHAR(255),
+    telefono VARCHAR(50),
+    celular VARCHAR(50)
+);
+
+-- Tabla: Especialidad
+CREATE TABLE especialidad (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL UNIQUE
+);
+
+-- Tabla: Caso
+CREATE TABLE caso (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    abogado_id INT NOT NULL,
+    cliente_id INT NOT NULL,
+    especialidad_id INT NOT NULL,
+    numero_expediente VARCHAR(100) NOT NULL UNIQUE,
+    nombre VARCHAR(255) NOT NULL,
+    estado ENUM('Abierto', 'Cerrado') DEFAULT 'Abierto',
+    FOREIGN KEY (abogado_id) REFERENCES abogado(id) ON DELETE CASCADE,
+    FOREIGN KEY (cliente_id) REFERENCES cliente(id) ON DELETE CASCADE,
+    FOREIGN KEY (especialidad_id) REFERENCES especialidad(id) ON DELETE CASCADE
+);
+
+-- Tabla: Foja
+CREATE TABLE foja (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    caso_id INT NOT NULL,
+    observacion TEXT,
+    imagen VARCHAR(255), -- Ruta al archivo (opcional)
+    FOREIGN KEY (caso_id) REFERENCES caso(id) ON DELETE CASCADE
+);
